@@ -3,7 +3,6 @@ package com.saungkertas.backyard;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
-import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
@@ -21,12 +20,12 @@ public class MainPipeline {
                 .discardingFiredPanes()
                 .withAllowedLateness(Duration.standardMinutes(5));
 
-        PipelineOptions options = PipelineOptionsFactory.fromArgs(args).create();
+        MainPipelineOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(MainPipelineOptions.class);
         Pipeline p = Pipeline.create(options);
 
         p.apply(KafkaIO.read()
-                .withBootstrapServers("your Kafka Brokers ip(s)")
-                .withTopic("your kafka topic"))
+                .withBootstrapServers(options.getKafkaBrokers())
+                .withTopic(options.getKafkaTopic()))
                 .apply(ParDo.of(new DoFn<Object, String>() {
 
                     @ProcessElement
@@ -36,7 +35,7 @@ public class MainPipeline {
 
                 }))
                 .apply(window)
-                .apply(TextIO.write().to("your gcs address")
+                .apply(TextIO.write().to(options.getDownstreamGcs())
                         .withoutSharding()
                         .withSuffix(".txt")
                         .withWindowedWrites());
