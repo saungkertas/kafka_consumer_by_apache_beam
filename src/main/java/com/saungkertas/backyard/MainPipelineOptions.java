@@ -11,7 +11,7 @@ public interface MainPipelineOptions extends PipelineOptions {
     @Validation.Required
     String getKafkaBrokers();
 
-    void setKafkaBrokers(ValueProvider<String> KafkaBrokers);
+    void setKafkaBrokers(ValueProvider<String> kafkaBrokers);
 
     @Description("Kafka Topics")
     @Validation.Required
