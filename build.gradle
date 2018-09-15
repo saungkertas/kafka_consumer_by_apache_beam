@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'pmd'
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testImplementation 'org.hamcrest:hamcrest-library:1.3'
+}
+
+repositories {
+    jcenter()
+}
+
+test {
+  testLogging {
+    exceptionFormat "full"
+    events "passed", "failed"
+  } 
+}
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled = true
+        xml.enabled = false
+        csv.enabled = false
+    }
+}
